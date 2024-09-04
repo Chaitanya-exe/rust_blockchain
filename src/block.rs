@@ -3,12 +3,13 @@ use log::info;
 use crypto::{digest::Digest, sha2::Sha256};
 use serde::{Serialize, Deserialize};
 use crate::errors::Result;
+use crate::transaction::Transaction;   
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block{
     timestamp: u128,
     height: usize,
-    transaction: String,
+    transaction: Vec<Transaction>,
     prev_block_hash: String,
     hash: String,
     nonce: i32
@@ -19,11 +20,11 @@ const TARGET_HEXT: usize = 4;
 
 
 impl Block{
-    pub fn new_genesis_block() -> Block{
-        Block::new_block(String::from("Genesis Block"), String::new(), 0).unwrap()
+    pub fn new_genesis_block(coinbase: Transaction) -> Block{
+        Block::new_block(vec![coinbase], String::new(), 0).unwrap()
     }
 
-    pub fn new_block(data: String, prev_block_hash: String, height: usize)-> Result<Block>{
+    pub fn new_block(data: Vec<Transaction>, prev_block_hash: String, height: usize)-> Result<Block>{
         let timestamp = SystemTime::now().
             duration_since(SystemTime::UNIX_EPOCH)?.
             as_millis();
@@ -38,6 +39,10 @@ impl Block{
         };
         block.run_proof_if_work()?;
         Ok(block)
+    }
+
+    pub fn get_transaction(&self) -> &Vec<Transaction> {
+        &self.transaction
     }
 
     fn run_proof_if_work(&mut self) -> Result<()>{

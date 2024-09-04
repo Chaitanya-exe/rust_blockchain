@@ -1,6 +1,7 @@
 use clap::{Command, arg};
 use crate::errors::Result;
 use crate::blockchain::Blockchain;
+use crate::transaction::Transaction;
 
 pub struct Cli{
     bc: Blockchain,
@@ -28,7 +29,7 @@ impl Cli {
 
         if let Some(ref matches) = matches.subcommand_matches("addblock"){
             if let Some(c) = matches.get_one::<String>("DATA"){
-                self.addblock(String::from(c))?;
+                self.addblock(vec![])?;
             } else{
                 println!("Not printing testing lists...");
             }
@@ -41,7 +42,7 @@ impl Cli {
         Ok(())
     }
 
-    pub fn addblock(&mut self, data: String) -> Result<()>{
+    pub fn addblock(&mut self, data: Vec<Transaction>) -> Result<()>{
         self.bc.add_block(data)
     }
 

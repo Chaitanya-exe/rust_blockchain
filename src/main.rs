@@ -2,6 +2,7 @@ mod block;
 mod blockchain;
 mod errors;
 mod cli;
+mod transaction;
 
 use crate::errors::Result;
 use crate::cli::Cli;
